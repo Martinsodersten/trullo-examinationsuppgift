@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/server.ts"
   },
   "repository": {
     "type": "git",
@@ -25,7 +26,7 @@
     "nodemon": "^3.1.10"
   },
   "devDependencies": {
-    "@types/express": "github:types/express",
+    "@types/express": "^5.0.3",
     "@types/mongoose": "^5.11.96",
     "@types/node": "^24.3.1",
     "ts-node": "^10.9.2",
