@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./config/db";
 import userRoutes from "./routes/user";
+import taskRoutes from "./routes/task";
 
 dotenv.config();
 const app = express();
@@ -21,5 +22,6 @@ connectDB().then(() => {
 });
 
 app.use("/trullo", userRoutes);
+app.use("/trullo", taskRoutes);
 
 export default app;

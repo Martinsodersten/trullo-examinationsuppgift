@@ -31,6 +31,16 @@ UserSchema.pre<IUser>("save", async function (next) {
   next();
 });
 
+// Hash password automatically before updating
+UserSchema.pre("findOneAndUpdate", async function (next) {
+  const update = this.getUpdate() as Record<string, any>;
+  if (update && update.password) {
+    const salt = await bcrypt.genSalt(10);
+    update.password = await bcrypt.hash(update.password, salt);
+  }
+  next();
+});
+
 // Compare password
 UserSchema.methods.comparePassword = async function (
   candidatePassword: string

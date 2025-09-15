@@ -7,7 +7,10 @@ export const createUser = async (req: Request, res: Response) => {
     const user = new User(req.body);
     const savedUser = await user.save();
     res.status(201).json(savedUser);
-  } catch (error) {
+  } catch (error: any) {
+    if (error.code === 11000 && error.keyPattern?.email) {
+      return res.status(409).json({ message: "Email already exists" });
+    }
     res.status(400).json({ message: "Error creating user" });
   }
 };
