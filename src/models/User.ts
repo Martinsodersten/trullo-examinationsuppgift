@@ -1,24 +1,40 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import bcrypt from "bcrypt";
 
+export type UserRole = "admin" | "user";
+
 export interface IUser extends Document {
   name: string;
   email: string;
+  role: UserRole;
   password: string;
+  passwordResetToken?: string | null;
+  passwordResetExpires?: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
 const UserSchema: Schema<IUser> = new Schema(
   {
-    name: { type: String, required: true, trim: true },
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+      minLength: 2,
+      maxLength: 50,
+    },
     email: {
       type: String,
       required: true,
       unique: true,
       lowercase: true,
-      match: [/^\S+@\S+\.\S+$/, "Invalid email format"],
+      index: true,
     },
-    password: { type: String, required: true, minLength: 8 },
+    role: { type: String, enum: ["admin", "user"], default: "user" },
+    password: { type: String, required: true, minLength: 8, select: false },
+    passwordResetToken: { type: String, default: null, select: false } as any,
+    passwordResetExpires: { type: Date, default: null, select: false },
   },
   { timestamps: true }
 );
@@ -26,7 +42,7 @@ const UserSchema: Schema<IUser> = new Schema(
 // Hash password automatically before saving
 UserSchema.pre<IUser>("save", async function (next) {
   if (!this.isModified("password")) return next();
-  const salt = await bcrypt.genSalt(10);
+  const salt = await bcrypt.genSalt(12);
   this.password = await bcrypt.hash(this.password, salt);
   next();
 });
