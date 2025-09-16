@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-const datetime = z.iso.datetime();
-
 export const createTaskSchema = z.object({
   title: z.string().min(1).max(120),
   description: z.string().min(1).max(2000).optional(),
